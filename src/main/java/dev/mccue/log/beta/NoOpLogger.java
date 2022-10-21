@@ -3,10 +3,8 @@ package dev.mccue.log.beta;
 import java.util.List;
 import java.util.function.Supplier;
 
-public enum NoOpLogger implements Logger {
+enum NoOpLogger implements Logger {
     INSTANCE;
-
-
 
     @Override
     public String toString() {
