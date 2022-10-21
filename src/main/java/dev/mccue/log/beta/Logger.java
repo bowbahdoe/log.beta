@@ -150,6 +150,9 @@ public interface Logger {
     <T> T withContext(List<LogEntry> entries, Supplier<T> code);
 
     default void withContext(List<LogEntry> entries, Runnable code) {
-
+        withContext(entries, () -> {
+            code.run();
+            return null;
+        });
     }
 }
