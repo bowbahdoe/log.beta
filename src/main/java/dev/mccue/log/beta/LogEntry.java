@@ -1,10 +1,8 @@
 package dev.mccue.log.beta;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.net.URI;
+import java.time.*;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -154,6 +152,8 @@ public record LogEntry(String key, Value value) {
          */
         Object toUnderlyingObject();
 
+        <T> T accept(Visitor<? extends T> visitor);
+
         static Value of(java.lang.String value) {
             return of(value, String::new);
         }
@@ -293,6 +293,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return null;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitNull();
+            }
         }
 
         /**
@@ -309,6 +314,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitString(value);
+            }
         }
 
         /**
@@ -320,6 +330,11 @@ public record LogEntry(String key, Value value) {
             @Override
             public Object toUnderlyingObject() {
                 return value;
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitBoolean(value);
             }
         }
 
@@ -333,6 +348,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitByte(value);
+            }
         }
 
         /**
@@ -344,6 +364,11 @@ public record LogEntry(String key, Value value) {
             @Override
             public Object toUnderlyingObject() {
                 return value;
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitCharacter(value);
             }
         }
 
@@ -357,6 +382,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitShort(value);
+            }
         }
 
         /**
@@ -368,6 +398,11 @@ public record LogEntry(String key, Value value) {
             @Override
             public Object toUnderlyingObject() {
                 return value;
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitInteger(value);
             }
         }
 
@@ -381,6 +416,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitLong(value);
+            }
         }
 
         /**
@@ -393,6 +433,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitFloat(value);
+            }
         }
 
         /**
@@ -404,6 +449,11 @@ public record LogEntry(String key, Value value) {
             @Override
             public Object toUnderlyingObject() {
                 return value;
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitDouble(value);
             }
         }
 
@@ -424,6 +474,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitUUID(value);
+            }
         }
 
         /**
@@ -439,6 +494,11 @@ public record LogEntry(String key, Value value) {
             @Override
             public Object toUnderlyingObject() {
                 return value;
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitURI(value);
             }
         }
 
@@ -456,6 +516,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitInstant(value);
+            }
         }
 
         /**
@@ -472,6 +537,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitLocalDateTime(value);
+            }
         }
 
         /**
@@ -487,6 +557,11 @@ public record LogEntry(String key, Value value) {
             @Override
             public Object toUnderlyingObject() {
                 return value;
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitLocalDate(value);
             }
         }
 
@@ -507,6 +582,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitLocalTime(value);
+            }
         }
 
         /**
@@ -526,6 +606,11 @@ public record LogEntry(String key, Value value) {
             public Object toUnderlyingObject() {
                 return value;
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitDuration(value);
+            }
         }
 
         /**
@@ -544,6 +629,11 @@ public record LogEntry(String key, Value value) {
             @Override
             public Object toUnderlyingObject() {
                 return value;
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitThrowable(value);
             }
         }
 
@@ -571,6 +661,11 @@ public record LogEntry(String key, Value value) {
                 return value.stream()
                         .map(Value::toUnderlyingObject)
                         .toList();
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitList(value);
             }
         }
 
@@ -606,6 +701,11 @@ public record LogEntry(String key, Value value) {
                                         .toUnderlyingObject()
                         ));
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitMap(value);
+            }
         }
 
         /**
@@ -635,6 +735,11 @@ public record LogEntry(String key, Value value) {
                 return value.stream()
                         .map(Value::toUnderlyingObject)
                         .collect(Collectors.toUnmodifiableSet());
+            }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitSet(value);
             }
         }
 
@@ -698,6 +803,71 @@ public record LogEntry(String key, Value value) {
                 return this.value()
                         .toUnderlyingObject();
             }
+
+            @Override
+            public <T> T accept(Visitor<? extends T> visitor) {
+                return visitor.visitLazy(this);
+            }
+        }
+
+        /**
+         * <p>
+         *     A visitor over the different kinds of values, provided for folks
+         *     who might not be on a Java version that supports pattern matching,
+         *     but still want to treat the hierarchy as sealed.
+         * </p>
+         *
+         * <p>
+         *     If pattern matching is supported, don't use this API - use that.
+         *     It will be nicer.
+         * </p>
+         *
+         * @param <T> The kind of value returned by the visitor.
+         */
+        interface Visitor<T> {
+            T visitNull();
+
+            T visitString(java.lang.String string);
+
+            T visitBoolean(boolean bool);
+
+            T visitByte(byte byte_);
+
+            T visitCharacter(char character);
+
+            T visitShort(short short_);
+
+            T visitInteger(int integer);
+
+            T visitLong(long long_);
+
+            T visitFloat(float float_);
+
+            T visitDouble(double double_);
+
+            T visitUUID(java.util.UUID uuid);
+
+            T visitURI(java.net.URI uri);
+
+            T visitInstant(java.time.Instant instant);
+
+            T visitLocalDateTime(java.time.LocalDateTime localDateTime);
+
+            T visitLocalDate(java.time.LocalDate localDate);
+
+            T visitLocalTime(java.time.LocalTime localTime);
+
+            T visitDuration(java.time.Duration duration);
+
+            T visitThrowable(java.lang.Throwable throwable);
+
+            T visitList(java.util.List<Value> list);
+
+            T visitMap(java.util.Map<java.lang.String, Value> map);
+
+            T visitSet(java.util.Set<Value> set);
+
+            T visitLazy(Lazy lazy);
         }
     }
 }
