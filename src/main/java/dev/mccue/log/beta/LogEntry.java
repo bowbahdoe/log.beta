@@ -142,6 +142,18 @@ public record LogEntry(String key, Value value) {
      * <p>Only supports a subset of "basic" data kinds</p>
      */
     public sealed interface Value {
+        /**
+         * Opaquely converts the value to the "base" value which backs it.
+         *
+         * <p>
+         *     Will realize lazy values and recursively convert collections.
+         * </p>
+         *
+         * @return One of the base values which the value hierarchy allows.
+         *
+         */
+        Object toUnderlyingObject();
+
         static Value of(java.lang.String value) {
             return of(value, String::new);
         }
@@ -158,7 +170,7 @@ public record LogEntry(String key, Value value) {
             return new Character(value);
         }
 
-        static Value of(java.lang.String key, short value) {
+        static Value of(short value) {
             return new Short(value);
         }
 
@@ -276,6 +288,11 @@ public record LogEntry(String key, Value value) {
             public java.lang.String toString() {
                 return "Null";
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return null;
+            }
         }
 
         /**
@@ -287,6 +304,11 @@ public record LogEntry(String key, Value value) {
             public String {
                 Objects.requireNonNull(value, "value must not be null");
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -295,6 +317,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped boolean.
          */
         record Boolean(boolean value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -303,6 +329,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped byte.
          */
         record Byte(byte value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -311,6 +341,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped char.
          */
         record Character(char value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -319,6 +353,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped shirt.
          */
         record Short(short value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -327,6 +365,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped int.
          */
         record Integer(int value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -335,6 +377,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped long.
          */
         record Long(long value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -343,6 +389,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped float.
          */
         record Float(float value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -351,6 +401,10 @@ public record LogEntry(String key, Value value) {
          * @param value A wrapped double.
          */
         record Double(double value) implements Value {
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -365,6 +419,11 @@ public record LogEntry(String key, Value value) {
             public UUID {
                 Objects.requireNonNull(value, "value must not be null");
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -375,6 +434,11 @@ public record LogEntry(String key, Value value) {
         record URI(java.net.URI value) implements Value {
             public URI {
                 Objects.requireNonNull(value, "value must not be null");
+            }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
             }
         }
 
@@ -387,6 +451,11 @@ public record LogEntry(String key, Value value) {
             public Instant {
                 Objects.requireNonNull(value, "value must not be null");
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -398,6 +467,11 @@ public record LogEntry(String key, Value value) {
             public LocalDateTime {
                 Objects.requireNonNull(value, "value must not be null");
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -408,6 +482,11 @@ public record LogEntry(String key, Value value) {
         record LocalDate(java.time.LocalDate value) implements Value {
             public LocalDate {
                 Objects.requireNonNull(value, "value must not be null");
+            }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
             }
         }
 
@@ -423,6 +502,11 @@ public record LogEntry(String key, Value value) {
             public LocalTime {
                 Objects.requireNonNull(value, "value must not be null");
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -437,6 +521,11 @@ public record LogEntry(String key, Value value) {
             public Duration {
                 Objects.requireNonNull(value, "value must not be null");
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
+            }
         }
 
         /**
@@ -450,6 +539,11 @@ public record LogEntry(String key, Value value) {
              */
             public Throwable {
                 Objects.requireNonNull(value, "value must not be null");
+            }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value;
             }
         }
 
@@ -469,6 +563,13 @@ public record LogEntry(String key, Value value) {
                 Objects.requireNonNull(value, "value must not be null");
                 this.value = value.stream()
                         .map(v -> v == null ? Null.INSTANCE : v)
+                        .toList();
+            }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value.stream()
+                        .map(Value::toUnderlyingObject)
                         .toList();
             }
         }
@@ -494,6 +595,17 @@ public record LogEntry(String key, Value value) {
                                 entry -> entry.getValue() == null ? Null.INSTANCE : entry.getValue()
                         ));
             }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value.entrySet()
+                        .stream()
+                        .collect(Collectors.toUnmodifiableMap(
+                                java.util.Map.Entry::getKey,
+                                entry -> entry.getValue()
+                                        .toUnderlyingObject()
+                        ));
+            }
         }
 
         /**
@@ -515,6 +627,13 @@ public record LogEntry(String key, Value value) {
                 Objects.requireNonNull(value, "value must not be null");
                 this.value = value.stream()
                         .map(v -> v == null ? Null.INSTANCE : v)
+                        .collect(Collectors.toUnmodifiableSet());
+            }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return value.stream()
+                        .map(Value::toUnderlyingObject)
                         .collect(Collectors.toUnmodifiableSet());
             }
         }
@@ -572,6 +691,12 @@ public record LogEntry(String key, Value value) {
                 } else {
                     return "Lazy[realized: value=" + value() + "]";
                 }
+            }
+
+            @Override
+            public Object toUnderlyingObject() {
+                return this.value()
+                        .toUnderlyingObject();
             }
         }
     }
